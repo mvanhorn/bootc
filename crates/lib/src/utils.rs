@@ -93,10 +93,12 @@ fn executable_candidates(name: &str) -> Vec<PathBuf> {
 pub fn have_executable_in_root(root: &Dir, name: &str) -> Result<bool> {
     for candidate in executable_candidates(name) {
         let candidate = candidate.strip_prefix("/").unwrap_or(&candidate);
-        if root
-            .try_exists(candidate)
-            .with_context(|| format!("checking whether {} exists", candidate.display()))?
-        {
+        if root.try_exists(candidate).with_context(|| {
+            format!(
+                "checking whether {} exists",
+                bootc_utils::PathQuotedDisplay::new(&candidate)
+            )
+        })? {
             return Ok(true);
         }
     }
